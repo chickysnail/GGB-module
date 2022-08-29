@@ -1,0 +1,10 @@
+# Name=(x,y) or (x,y)
+A point 1 2
+A point
+point 1 2
+point
+
+# Line(Point, Point) or Line(Point, Vector) or Line(Point, DirectionVector)
+line
+u line A B
+line A B
