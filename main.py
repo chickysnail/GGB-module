@@ -38,7 +38,7 @@ def line(values):
     return definition
 
 # functions: point, line
-# TODO: point on
+# TODO: point on, segment
 
 funNames = {
     point: r"(?:point|p|pnt)",
@@ -50,29 +50,43 @@ funNames = {
 name = r"(?:[a-zA-Z]\w*)"
 coordinates = r"(?:\d* \d*)"
 
-class fun:
+fun = {
     # (Name) (point) (x y)
-    point = re.compile(f"({name})? ?({funNames[point]}) ?({coordinates})?")
+    point : re.compile(f"({name})? ?({funNames[point]}) ?({coordinates})?"),
     # (Name) (line) (x y) (pointName) (x y) (pointName) 
-    line = re.compile(f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))")
+    line : re.compile(f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"),
+}
+
+def transforminput(inp):
+    for r, line in enumerate(inp.splitlines()):
+        for func in fun.__dict__.keys(): # looping through all functions' filters
+            if func.startswith("__"): continue
+
+            for match in re.finditer(fun.__dict__[func], row):
+                cutcmd = match.groups()
+                if re.search(cutcmd[1], funNames[func]): pass
 
 
-for i, row in enumerate(open('inputExample.txt')):
-    print(f"-{i+1}-")
+def main():    
+    for i, row in enumerate(open('inputExample.txt')):
+        print(f"-{i+1}-")
 
-    for match in re.finditer(fun.line, row):
-        cutcmd = match.groups()
-        if re.search(cutcmd[1], funNames[line]):
-            ggbcommand = line(cutcmd)
-            print(ggbcommand)
+        for match in re.finditer(fun[line], row):
+            cutcmd = match.groups()
+            if re.search(cutcmd[1], funNames[line]):
+                ggbcommand = line(cutcmd)
+                print(ggbcommand)
 
-        print('Found on line %s: %s' % (i+1, match.groups()))
+            print('Found on line %s: %s' % (i+1, match.groups()))
 
-    for match in re.finditer(fun.point, row):
-        cutcmd = match.groups()
-        if re.search(cutcmd[1], funNames[point]):
-            ggbcommand = point({"name": cutcmd[0], "coords": cutcmd[2]})
-            print(ggbcommand)
-        print('Found on line %s: %s' % (i+1, match.groups()))
+        for match in re.finditer(fun[point], row):
+            cutcmd = match.groups()
+            if re.search(cutcmd[1], funNames[point]):
+                ggbcommand = point({"name": cutcmd[0], "coords": cutcmd[2]})
+                print(ggbcommand)
+            print('Found on line %s: %s' % (i+1, match.groups()))
 
-    print()
+        print()
+
+if __name__=="__main__":
+    main()
