@@ -57,15 +57,18 @@ fun = {
     line : re.compile(f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"),
 }
 
-def transforminput(inp):
+def transformInput(inp):
+    out = []
     for r, line in enumerate(inp.splitlines()):
-        for func in fun.__dict__.keys(): # looping through all functions' filters
-            if func.startswith("__"): continue
+        for func in fun.keys(): # looping through all functions' filters
 
-            for match in re.finditer(fun.__dict__[func], row):
+            for match in re.finditer(fun[func], row):
                 cutcmd = match.groups()
-                if re.search(cutcmd[1], funNames[func]): pass
-
+                if re.search(cutcmd[1], funNames[func]): 
+                    ggbcommand = func(cutcmd)
+                    out.append(ggbcommand)
+                    break
+    return out
 
 def main():    
     for i, row in enumerate(open('inputExample.txt')):
