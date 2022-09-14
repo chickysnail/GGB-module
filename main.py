@@ -62,7 +62,7 @@ def transformInput(inp):
     for r, line in enumerate(inp.splitlines()):
         for func in fun.keys(): # looping through all functions' filters
 
-            for match in re.finditer(fun[func], row):
+            for match in re.finditer(fun[func], line):
                 cutcmd = match.groups()
                 if re.search(cutcmd[1], funNames[func]): 
                     ggbcommand = func(cutcmd)
