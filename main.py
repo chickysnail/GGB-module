@@ -1,20 +1,32 @@
 import re
-
+# TODO: using pyperclip3 put the result into clipboard (delftstack.com/howto/python/python-copy-to-clipboard)
 
 # e for execute
 def point(values):
-    name = values["name"]
+    oName = values["name"] # oName short for object name
     coords: list = [0,0] if values["coords"] == None else values["coords"].split()
     
-    out=""
-    if values["name"] is not None:
-        out = f'{values["name"]}='
-    out += f'({coords[0]}, {coords[1]})'
+    definition=""
+    if oName is not None:
+        definition = f'{oName}='
+    definition += f'({coords[0]}, {coords[1]})'
     
-    return out
+    return definition
 
 def line(values):
-    return 
+    oName = values["name"]
+    arg1 = values["arg1"]
+    arg2 = values["arg2"]
+
+    def normalise(arg):
+        pass
+
+    definition = ""
+    if oName is not None:
+        definition += f"{oName}="
+    #TODO add Line(arg1, arg2)
+    definition += f''
+    return definition
 
 # functions: point, line
 # TODO: point on, line
@@ -33,7 +45,6 @@ class fun:
     # point (Name) ([x y])
     point = re.compile(rf"({name})? ?({funNames[point]}) ?({coordinates})?")
     # line (Name) ([[x y]|Point]|[[x y]|Point])
-    # "(?:((?:\d* \d*)|(?:[a-zA-Z]\w*)) ((?:\d* \d*)|(?:[a-zA-Z]\w*)))"
     line = re.compile(rf"({name})? ?({funNames[line]}) ?(?:({coordinates}|{name}) ({coordinates}|{name}))")
 
 
@@ -49,3 +60,5 @@ for i, row in enumerate(open('inputExample.txt')):
             ggbcomand = point({"name": cutcmd[0], "coords": cutcmd[2]})
         print(ggbcomand)
         print('Found on line %s: %s' % (i+1, match.groups()))
+
+    print()
