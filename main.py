@@ -4,8 +4,8 @@ import re
 # e for execute
 def point(values):
     # values: (Name) (point) (x y)
-    oName = values["name"] # oName short for object name
-    coords: list = [0,0] if values["coords"] == None else values["coords"].split()
+    oName = values[0] # oName short for object name
+    coords: list = [0,0] if values[2] == None else values[2].split()
     
     definition=""
     if oName is not None:
