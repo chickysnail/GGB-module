@@ -1,22 +1,21 @@
 import re
 # TODO: using pyperclip3 put the result into clipboard (delftstack.com/howto/python/python-copy-to-clipboard)
 
-# e for execute
 def point(values):
     # values: (Name) (point) (x y)
-    oName = values[0] # oName short for object name
+    sName = values[0] # sName short for self name
     coords: list = [0,0] if values[2] == None else values[2].split()
     
     definition=""
-    if oName is not None:
-        definition = f'{oName}='
+    if sName is not None:
+        definition = f'{sName.capitalize()}='
     definition += f'({coords[0]}, {coords[1]})'
     
     return definition
 
 def line(values):
     # values: (Name) (line) (x y) (pointName) (x y) (pointName) 
-    oName = values[0]
+    sName = values[0]
     coord = [None, None]
     pntName = [None, None]
     coord[0], pntName[0] = values[2], values[3]  # One of two values should be None
@@ -32,9 +31,21 @@ def line(values):
             arg[i] = pntName[i]
 
     definition = ""
-    if oName is not None:
-        definition += f"{oName}="
+    if sName is not None:
+        definition += f"{sName}="
     definition += f'Line({arg[0]}, {arg[1]})'
+    return definition
+
+def pointOn(values):
+    # values: (Name) (point on) (object)
+    sName = values[0]
+    objectName = values[2]
+
+    definition = ""
+    if sName is not None:
+        definition+=f'{sName.capitalize()}='
+    definition+=f'Point({objectName})'
+
     return definition
 
 # functions: point, line
@@ -43,6 +54,7 @@ def line(values):
 funNames = {
     point: r"(?:point|p|pnt)",
     line: r"(?:line|ln)",
+    pointOn: r"(?:point on|pon)",
 }
 
 
@@ -52,9 +64,11 @@ coordinates = r"(?:\d* \d*)"
 
 fun = {
     # (Name) (point) (x y)
-    point : re.compile(f"({name})? ?({funNames[point]}) ?({coordinates})?"),
+    point : re.compile(f"({name})? ?((?!{funNames[pointOn]}){funNames[point]}) ?({coordinates})?"),
     # (Name) (line) (x y) (pointName) (x y) (pointName) 
     line : re.compile(f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"),
+    # (Name) (point on) (object)
+    pointOn: re.compile(f"({name})? ?({funNames[pointOn]}) ?({name})"),
 }
 
 def transformInput(inp):
