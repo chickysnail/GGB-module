@@ -48,27 +48,34 @@ def pointOn(values):
 
     return definition
 
-# functions: point, line
-# TODO: point on, segment
+# functions: point, line, point on
+# TODO: segment
+# TODO: check that first arg is name not function
 
 funNames = {
-    point: r"(?:point|p|pnt)",
+    point: r"(?:point|pnt)",
     line: r"(?:line|ln)",
-    pointOn: r"(?:point on|pon)",
+    pointOn: r"(?:pointon|pon)",
 }
 
 
 # sub patterns
 name = r"(?:[a-zA-Z]\w*)"
-coordinates = r"(?:\d* \d*)"
+coordinates = r"(?:-?\d+ -?\d+)"
 
 fun = {
     # (Name) (point) (x y)
-    point : re.compile(f"({name})? ?((?!{funNames[pointOn]}){funNames[point]}) ?({coordinates})?"),
+    point : re.compile(
+        f"(?:(?:((?:[a-zA-Z]\w*))? +)|(?:^ *))({funNames[point]})(?: +((?:-?\d+ -?\d+)))? *$"
+        ),
     # (Name) (line) (x y) (pointName) (x y) (pointName) 
-    line : re.compile(f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"),
+    line : re.compile(
+        f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"
+        ),
     # (Name) (point on) (object)
-    pointOn: re.compile(f"({name})? ?({funNames[pointOn]}) ?({name})"),
+    pointOn: re.compile(
+        f"({name})? ?({funNames[pointOn]}) ?({name})"
+        ),
 }
 
 def transformInput(inp):
@@ -78,7 +85,7 @@ def transformInput(inp):
 
             for match in re.finditer(fun[func], line):
                 cutcmd = match.groups()
-                if re.search(cutcmd[1], funNames[func]): 
+                if re.search(cutcmd[1], funNames[func], re.MULTILINE): 
                     ggbcommand = func(cutcmd)
                     out.append(ggbcommand)
                     break
