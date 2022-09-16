@@ -1,3 +1,81 @@
+## for "point"
+#to be matched
+point
+ pnt
+point 
+aadfs point
+a pnt -1 2
+Af point 0 35
+pnt 2 -1
+point 35 0
+l point 1 2
+
+#not to be matched
+a line A B
+frame line 1 2 34 4
+At pointon b
+pointon k
+mline pointon f 
+
+
+## for "line"
+# to be matched
+line  a B
+line Aasd Alfj
+ln ad bsf
+ln  df  la
+name line a B
+ Name  line Aasd Alfj
+n  ln ad  bsf
+ line ln  df  la
+line 1 2 3 4
+namme ln -1 54 b
+n ln B 34 -24
+
+# not to be matched
+n ln 34 B -24
+point
+ pnt
+point 
+aadfs point
+a pnt -1 2
+Af point 0 35
+pnt 2 -1
+point 35 0
+l point 1 2
+At pointon b
+pointon k
+mline pointon f 
+
+
+## for "point on"
+# to be matched
+pointon name
+pointon F 
+ A  pointon  DafsA  
+pon name
+pon F 
+ A  pon  DafsA  
+
+# not to be matched
+point
+ pnt
+point 
+aadfs point
+ln ad bsf
+ln  df  la
+name line a B
+ Name  line Aasd Alfj
+n  ln ad  bsf
+ line ln  df  la
+line 1 2 3 4
+a pnt -1 2
+Af point 0 35
+pnt 2 -1
+point 35 0
+l point 1 2
+
+
 # Name=(x,y) or (x,y)
 A point 1 2
 A pnt

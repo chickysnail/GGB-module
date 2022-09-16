@@ -13,6 +13,18 @@ def point(values):
     
     return definition
 
+def pointOn(values):
+    # values: (Name) (point on) (object)
+    sName = values[0]
+    objectName = values[2]
+
+    definition = ""
+    if sName is not None:
+        definition+=f'{sName.capitalize()}='
+    definition+=f'Point({objectName})'
+
+    return definition
+
 def line(values):
     # values: (Name) (line) (x y) (pointName) (x y) (pointName) 
     sName = values[0]
@@ -36,26 +48,61 @@ def line(values):
     definition += f'Line({arg[0]}, {arg[1]})'
     return definition
 
-def pointOn(values):
-    # values: (Name) (point on) (object)
+def segment(values):
+    # values: (Name) (segment) (x y) (pointName) (x y) (pointName) 
     sName = values[0]
-    objectName = values[2]
+    coord = [None, None]
+    pntName = [None, None]
+    coord[0], pntName[0] = values[2], values[3]  # One of two values should be None
+    coord[1], pntName[1] = values[4], values[5]
+
+    # definition: [name=]Segment(arg1, arg2)
+    arg=[None, None]
+    for i, c in enumerate(coord): # setting arguments from 'values'
+        if c is not None: # make from 'x y' '(x, y)
+            arg[i] = c.split()
+            arg[i] = f'({arg[i][0]}, {arg[i][1]})'
+        else: 
+            arg[i] = pntName[i]
 
     definition = ""
     if sName is not None:
-        definition+=f'{sName.capitalize()}='
-    definition+=f'Point({objectName})'
-
+        definition += f"{sName}="
+    definition += f'Segment({arg[0]}, {arg[1]})'
     return definition
 
-# functions: point, line, point on
-# TODO: segment
-# TODO: check that first arg is name not function
+def ray(values):
+    # values: (Name) (ray) (x y) (pointName) (x y) (pointName) 
+    sName = values[0]
+    coord = [None, None]
+    pntName = [None, None]
+    coord[0], pntName[0] = values[2], values[3]  # One of two values should be None
+    coord[1], pntName[1] = values[4], values[5]
+
+    # definition: [name=]Ray(arg1, arg2)
+    arg=[None, None]
+    for i, c in enumerate(coord): # setting arguments from 'values'
+        if c is not None: # make from 'x y' '(x, y)
+            arg[i] = c.split()
+            arg[i] = f'({arg[i][0]}, {arg[i][1]})'
+        else: 
+            arg[i] = pntName[i]
+
+    definition = ""
+    if sName is not None:
+        definition += f"{sName}="
+    definition += f'Ray({arg[0]}, {arg[1]})'
+    return definition
+
+# DONE: point, line, point on, segment
+# TODO: 
 
 funNames = {
     point: r"(?:point|pnt)",
-    line: r"(?:line|ln)",
     pointOn: r"(?:pointon|pon)",
+    line: r"(?:line|ln)",
+    segment: r"(?:segment|segm)",
+    ray: r"(?:ray)",
 }
 
 
@@ -66,16 +113,26 @@ coordinates = r"(?:-?\d+ -?\d+)"
 fun = {
     # (Name) (point) (x y)
     point : re.compile(
-        f"(?:(?:((?:[a-zA-Z]\w*))? +)|(?:^ *))({funNames[point]})(?: +((?:-?\d+ -?\d+)))? *$"
+            f"(?:(?:({name})? +)|(?:^ *))({funNames[point]})(?: +({coordinates}))? *$"
+        ),
+    # (Name) (pointon) (object)
+    pointOn: re.compile(
+            f"(?:(?:({name})? +)|(?:^ *))({funNames[pointOn]})(?: +({name}))? *$"
         ),
     # (Name) (line) (x y) (pointName) (x y) (pointName) 
     line : re.compile(
-        f"(?:(?:^ *)|(?:({name})? +))({funNames[line]})"\
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[line]})"\
             f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
-    # (Name) (point on) (object)
-    pointOn: re.compile(
-        f"(?:(?:({name})? +)|(?:^ *))({funNames[pointOn]})(?: +({name}))? *$"
+    # (Name) (segment) (x y) (pointName) (x y) (pointName) 
+    segment: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[segment]})"\
+            f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
+        ),
+    # (Name) (ray) (x y) (pointName) (x y) (pointName) 
+    ray: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[ray]})"\
+            f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
 }
 
@@ -86,7 +143,7 @@ def transformInput(inp):
 
             for match in re.finditer(fun[func], line):
                 cutcmd = match.groups()
-                if re.search(cutcmd[1], funNames[func], re.MULTILINE|re.IGNORECASE): 
+                if re.search(cutcmd[1], funNames[func], re.MULTILINE): 
                     ggbcommand = func(cutcmd)
                     out.append(ggbcommand)
                     break
