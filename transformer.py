@@ -1,5 +1,5 @@
 import re
-# TODO: using pyperclip3 put the result into clipboard (delftstack.com/howto/python/python-copy-to-clipboard)
+
 
 def point(values):
     # values: (Name) (point) (x y)
@@ -26,7 +26,7 @@ def pointOn(values):
     return definition
 
 def line(values):
-    # values: (Name) (line) (x y) (pointName) (x y) (pointName) 
+    # values: (name) (line) (x y) (pointName) (x y) (pointName) 
     sName = values[0]
     coord = [None, None]
     pntName = [None, None]
@@ -49,7 +49,7 @@ def line(values):
     return definition
 
 def segment(values):
-    # values: (Name) (segment) (x y) (pointName) (x y) (pointName) 
+    # values: (name) (segment) (x y) (pointName) (x y) (pointName) 
     sName = values[0]
     coord = [None, None]
     pntName = [None, None]
@@ -72,7 +72,7 @@ def segment(values):
     return definition
 
 def ray(values):
-    # values: (Name) (ray) (x y) (pointName) (x y) (pointName) 
+    # values: (name) (ray) (x y) (pointName) (x y) (pointName) 
     sName = values[0]
     coord = [None, None]
     pntName = [None, None]
@@ -94,8 +94,24 @@ def ray(values):
     definition += f'Ray({arg[0]}, {arg[1]})'
     return definition
 
-# DONE: point, line, point on, segment
-# TODO: 
+def midpoint(values):
+    # values: (Name) (midpoint) (oName1) (oName2)
+    sName = values[0]
+    oName1, oName2 = values[2], values[3]
+    
+    definition=""
+    if sName is not None:
+        definition = f'{sName.capitalize()}='
+    definition += f'Midpoint({oName1}'
+    if oName2 is not None:
+        definition += f', {oName2}'
+    definition += ')'
+    return definition
+    
+
+# DONE: point, line, point on, segment, ray
+# TODO: midpoint, perpline, perpsegment, parallel line, 
+# bisection (serper), bisector, tangent, circumference, hide object, show object
 
 funNames = {
     point: r"(?:point|pnt)",
@@ -103,6 +119,7 @@ funNames = {
     line: r"(?:line|ln)",
     segment: r"(?:segment|segm)",
     ray: r"(?:ray)",
+    midpoint: r"(?:midpoint|mid)",
 }
 
 
@@ -134,6 +151,10 @@ fun = {
             f"(?:(?:^ *)|(?:({name})? +))({funNames[ray]})"\
             f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
+    # (Name) (midpoint) (object) (object) 
+    midpoint: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[midpoint]}) +(?:(?:({name})) *(?:({name}))?)"
+        ),
 }
 
 def transformInput(inp):
@@ -146,7 +167,7 @@ def transformInput(inp):
                 if re.search(cutcmd[1], funNames[func], re.MULTILINE): 
                     ggbcommand = func(cutcmd)
                     out.append(ggbcommand)
-                    break
+                    break   
     return out
 
 def main():    
