@@ -70,11 +70,12 @@ fun = {
         ),
     # (Name) (line) (x y) (pointName) (x y) (pointName) 
     line : re.compile(
-        f"({name})? ?({funNames[line]}) ?(?:({coordinates})|({name})) (?:({coordinates})|({name}))"
+        f"(?:(?:^ *)|(?:({name})? +))({funNames[line]})"\
+            f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
     # (Name) (point on) (object)
     pointOn: re.compile(
-        f"({name})? ?({funNames[pointOn]}) ?({name})"
+        f"(?:(?:({name})? +)|(?:^ *))({funNames[pointOn]})(?: +({name}))? *$"
         ),
 }
 
@@ -85,7 +86,7 @@ def transformInput(inp):
 
             for match in re.finditer(fun[func], line):
                 cutcmd = match.groups()
-                if re.search(cutcmd[1], funNames[func], re.MULTILINE): 
+                if re.search(cutcmd[1], funNames[func], re.MULTILINE|re.IGNORECASE): 
                     ggbcommand = func(cutcmd)
                     out.append(ggbcommand)
                     break
