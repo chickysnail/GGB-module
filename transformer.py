@@ -108,9 +108,28 @@ def midpoint(values):
     definition += ')'
     return definition
     
+def parallel(values):
+    # values: (name) (parallel) (point) (line|point) (point)
+    sName = values[0]
+    arg1, arg2, arg3 = values[2:5]
 
-# DONE: point, line, point on, segment, ray
-# TODO: midpoint, perpline, perpsegment, parallel line, 
+    definition='' 
+    # case 1: Line(Point, Segment(Point, Point))
+    # case 2: Line(Point, line)
+    if sName is not None:
+        definition+=f'{sName}='
+    definition+=f'Line({arg1}, '
+    if arg3 is not None: # case of 3 points
+        definition+=f'Segment({arg2}, {arg3})'
+    else: # case of point and line
+        definition+=f'{arg2}'
+    definition+=')'
+
+    return definition
+
+
+# DONE: point, line, point on, segment, ray, midpoint
+# TODO: perpline, perpsegment, parallel line, 
 # bisection (serper), bisector, tangent, circumference, hide object, show object
 
 funNames = {
@@ -120,6 +139,7 @@ funNames = {
     segment: r"(?:segment|segm)",
     ray: r"(?:ray)",
     midpoint: r"(?:midpoint|mid)",
+    parallel: r"(?:parallel|parl)",
 }
 
 
@@ -136,17 +156,17 @@ fun = {
     pointOn: re.compile(
             f"(?:(?:({name})? +)|(?:^ *))({funNames[pointOn]})(?: +({name}))? *$"
         ),
-    # (Name) (line) (x y) (pointName) (x y) (pointName) 
+    # (name) (line) (x y) (pointName) (x y) (pointName) 
     line : re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[line]})"\
             f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
-    # (Name) (segment) (x y) (pointName) (x y) (pointName) 
+    # (name) (segment) (x y) (pointName) (x y) (pointName) 
     segment: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[segment]})"\
             f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
         ),
-    # (Name) (ray) (x y) (pointName) (x y) (pointName) 
+    # (name) (ray) (x y) (pointName) (x y) (pointName) 
     ray: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[ray]})"\
             f" +(?:(?:({coordinates})|({name})) +(?:({coordinates})|({name})))"
@@ -154,6 +174,11 @@ fun = {
     # (Name) (midpoint) (object) (object) 
     midpoint: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[midpoint]}) +(?:(?:({name})) *(?:({name}))?)"
+        ),
+    # (name) (parallel) (point) (line|point) (point)
+    parallel: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[parallel]})"\
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
         ),
 }
 
