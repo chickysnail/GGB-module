@@ -116,7 +116,24 @@ def midpoint(values):
         definition += f', {oName2}'
     definition += ')'
     return definition
+
+def bisector(values):
+    # values: (Name) (bisection) (oName1) (oName2)
+    sName = values[0]
+    oName1, oName2 = values[2], values[3]
+    if oName2 is not None: # capitilize if given points, not segment
+        oName1 = capitalize(oName1)
+        oName2 = capitalize(oName2)
     
+    definition=""
+    if sName is not None:
+        definition = f'{sName.capitalize()}='
+    definition += f'PerpendicularBisector({oName1}'
+    if oName2 is not None:
+        definition += f', {oName2}'
+    definition += ')'
+    return definition
+
 def parallel(values):
     # values: (name) (parallel) (point) (line|point) (point)
     sName = values[0]
@@ -155,8 +172,12 @@ def perpline(values):
 
     return definition
 
-# DONE: point, line, point on, segment, ray, midpoint, parallel line
-# TODO: perpline, perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object
+# def perpsegment(values):
+
+
+
+# DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line
+# TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object
 
 funNames = {
     point: r"(?:point|pnt)",
@@ -165,6 +186,7 @@ funNames = {
     segment: r"(?:segment|segm)",
     ray: r"(?:ray)",
     midpoint: r"(?:midpoint|mid)",
+    bisector: r"(?:bisector|serper|srpr)",
     parallel: r"(?:parallel|parl)",
     perpline: r"(?:perpendicularline|perpline|perl)",
 }
@@ -201,6 +223,10 @@ fun = {
     # (Name) (midpoint) (object) (object) 
     midpoint: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[midpoint]}) +(?:(?:({name})) *(?:({name}))?)"
+        ),
+    # (Name) (bisector) (object) (object) 
+    bisector: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[bisector]}) +(?:(?:({name})) *(?:({name}))?)"
         ),
     # (name) (parallel) (point) (line|point) (point)
     parallel: re.compile(
