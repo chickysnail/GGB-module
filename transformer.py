@@ -1,4 +1,10 @@
 import re
+import conf
+
+def capitalize(s:str, do=conf.CAPITALIZE):
+    if do:
+        return s.capitalize()
+    return s
 
 
 def point(values):
@@ -40,7 +46,7 @@ def line(values):
             arg[i] = c.split()
             arg[i] = f'({arg[i][0]}, {arg[i][1]})'
         else: 
-            arg[i] = pntName[i]
+            arg[i] = capitalize(pntName[i]) 
 
     definition = ""
     if sName is not None:
@@ -63,7 +69,7 @@ def segment(values):
             arg[i] = c.split()
             arg[i] = f'({arg[i][0]}, {arg[i][1]})'
         else: 
-            arg[i] = pntName[i]
+            arg[i] = capitalize(pntName[i])
 
     definition = ""
     if sName is not None:
@@ -86,7 +92,7 @@ def ray(values):
             arg[i] = c.split()
             arg[i] = f'({arg[i][0]}, {arg[i][1]})'
         else: 
-            arg[i] = pntName[i]
+            arg[i] = capitalize(pntName[i])
 
     definition = ""
     if sName is not None:
@@ -98,6 +104,9 @@ def midpoint(values):
     # values: (Name) (midpoint) (oName1) (oName2)
     sName = values[0]
     oName1, oName2 = values[2], values[3]
+    if oName2 is not None: # capitilize if given points, not segment
+        oName1 = capitalize(oName1)
+        oName2 = capitalize(oName2)
     
     definition=""
     if sName is not None:
@@ -118,19 +127,36 @@ def parallel(values):
     # case 2: Line(Point, line)
     if sName is not None:
         definition+=f'{sName}='
-    definition+=f'Line({arg1}, '
+    definition+=f'Line({capitalize(arg1)}, '
     if arg3 is not None: # case of 3 points
-        definition+=f'Segment({arg2}, {arg3})'
+        definition+=f'Segment({capitalize(arg2)}, {capitalize(arg3)})'
     else: # case of point and line
         definition+=f'{arg2}'
     definition+=')'
 
     return definition
 
+def perpline(values):
+    # values: (name) (perpline) (point) (point|line) (point)
+    sName = values[0]
+    arg1, arg2, arg3 = values[2:5]
 
-# DONE: point, line, point on, segment, ray, midpoint
-# TODO: perpline, perpsegment, parallel line, 
-# bisection (serper), bisector, tangent, circumference, hide object, show object
+    definition='' 
+    # case 1: PerpendicularLine(Point, Segment(Point, Point))
+    # case 2: PerpendicularLine(Point, line)
+    if sName is not None:
+        definition+=f'{sName}='
+    definition+=f'PerpendicularLine({capitalize(arg1)}, '
+    if arg3 is not None: # case of 3 points
+        definition+=f'Segment({capitalize(arg2)}, {capitalize(arg3)})'
+    else: # case of point and line
+        definition+=f'{arg2}'
+    definition+=')'
+
+    return definition
+
+# DONE: point, line, point on, segment, ray, midpoint, parallel line
+# TODO: perpline, perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object
 
 funNames = {
     point: r"(?:point|pnt)",
@@ -140,6 +166,7 @@ funNames = {
     ray: r"(?:ray)",
     midpoint: r"(?:midpoint|mid)",
     parallel: r"(?:parallel|parl)",
+    perpline: r"(?:perpendicularline|perpline|perl)",
 }
 
 
@@ -180,6 +207,12 @@ fun = {
             f"(?:(?:^ *)|(?:({name})? +))({funNames[parallel]})"\
             f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
         ),
+    # (name) (perpline) (point) (line|point) (point)
+    perpline: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[perpline]})"\
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
+        ),
+
 }
 
 def transformInput(inp):
