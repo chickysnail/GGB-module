@@ -191,7 +191,34 @@ def anglebisector(values):
     
     return definition
 
+def intersect(values):
+    # values: (name) (intersect) (point|line) (point|line) (point) (point)
+    sName = values[0]
+    arg1, arg2, arg3, arg4 = values[2:6]
 
+    definition=''
+    if sName is not None:
+        definition+=f'{capitalize(sName)}='
+    definition+='Intersect('
+    # case 1: Intersect(Line(Point, Point), Line(Point, Point))
+    # case 2: AngleBisector(object, Line(Point, Point))
+    # case 3: AngleBisector(object, object)
+    if arg3 is not None:
+        if arg4 is not None: # case 1
+            definition+=f'Line({capitalize(arg1)},{capitalize(arg2)}),Line({capitalize(arg3)},{capitalize(arg4)})'
+        else: # case 2
+            definition+=f'{arg1},Line({capitalize(arg2)},{capitalize(arg3)})'
+    else: # case 3
+        definition+=f'{arg1},{arg2}'
+    definition+=')'
+
+    return definition
+
+#TODO:
+def hide(values):
+    # values: (name) (hide)
+    #SetConditionToShowObject((name),false)
+    pass
 
 # DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line
 # TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object, intersection
@@ -208,6 +235,7 @@ funNames = {
     perpline: r"(?:perpendicularline|perpline|perl)",
     # perpsegment
     anglebisector: r"(?:anglebisector|bisec|rat)",
+    intersect: r"(?:intersect|inter|int)",
 }
 
 
@@ -247,22 +275,27 @@ fun = {
     bisectionline: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[bisectionline]}) +(?:(?:({name})) *(?:({name}))?)"
         ),
-    # (name) (parallel) (point) (line|point) (point)
+    # (name) (parallel) (point) (line|point) $ (point)
     parallel: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[parallel]})"\
             f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
         ),
-    # (name) (perpline) (point) (line|point) (point)
+    # (name) (perpline) (point) (line|point) $ (point)
     perpline: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[perpline]})"\
-            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))(?: *$| +(?:({name})))"
         ),
-    # (name) (perpsegment) (point) (line|point) (point)
+    # (name) (perpsegment) (point) (line|point) $ (point)
     # perpsegment: 
-    # (name) (anglebisector) (point|line) (point|line) (point)
+    # (name) (anglebisector) (point|line) (point|line) $ (point)
     anglebisector: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[anglebisector]})"\
             f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
+        ),
+    # (name) (intersect) (point|line) (point|line) $ (point) $ (point)
+    intersect: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[intersect]})"\
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))(?: *$| +(?:({name})))"
         ),
 }
 
