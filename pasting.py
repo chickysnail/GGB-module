@@ -19,7 +19,7 @@ def on_click(x, y, button, pressed):
 
         if diff < 0.4:
             # print('double click')
-            keyboard.write(pc.paste()+"\n")
+            keyboard.press_and_release("ctrl+v, enter")
             # keyboard.press_and_release('esc')
             # print("pasted")
 
