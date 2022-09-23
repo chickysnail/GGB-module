@@ -214,18 +214,28 @@ def intersect(values):
 
     return definition
 
-#TODO:
 def hide(values):
     # values: (name) (hide)
-    #SetConditionToShowObject((name),false)
-    pass
+
+    sName = values[0] # sName short for self name
+    definition=f'SetConditionToShowObject({sName}, false)'
+    
+    return definition
+
+def show(values):
+    # values: (name) (show)
+
+    sName = values[0] # sName short for self name
+    definition=f'SetConditionToShowObject({sName}, true)'
+    
+    return definition
 
 # DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line
 # TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object, intersection
 
 funNames = {
     point: r"(?:point|pnt)",
-    pointOn: r"(?:pointon|pon)",
+    pointOn: r"(?:pointon|on)",
     line: r"(?:line|ln)",
     segment: r"(?:segment|segm)",
     ray: r"(?:ray)",
@@ -236,6 +246,8 @@ funNames = {
     # perpsegment
     anglebisector: r"(?:anglebisector|bisec|rat)",
     intersect: r"(?:intersect|inter|int)",
+    hide: r"(?:hide)",
+    show: r"(?:show)",
 }
 
 
@@ -296,6 +308,14 @@ fun = {
     intersect: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[intersect]})"\
             f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))(?: *$| +(?:({name})))"
+        ),
+    # (name) (hide)
+    hide: re.compile(
+            f"({name}) ({funNames[hide]})"
+        ),
+    # (name) (show)
+    show: re.compile(
+            f"({name}) ({funNames[show]})"
         ),
 }
 

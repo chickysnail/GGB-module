@@ -21,7 +21,7 @@ def on_click(x, y, button, pressed):
             # print('double click')
             keyboard.write(pc.paste()+"\n")
             # keyboard.press_and_release('esc')
-            print("pasted")
+            # print("pasted")
 
 def background_listener():
     with Listener(on_click=on_click) as listener:
