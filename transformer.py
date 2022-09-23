@@ -117,7 +117,7 @@ def midpoint(values):
     definition += ')'
     return definition
 
-def bisector(values):
+def bisectionline(values):
     # values: (Name) (bisection) (oName1) (oName2)
     sName = values[0]
     oName1, oName2 = values[2], values[3]
@@ -174,10 +174,27 @@ def perpline(values):
 
 # def perpsegment(values):
 
+def anglebisector(values):
+    # values: (name) (perpline) (point|line) (point|line|line) (point)
+    sName = values[0]
+    arg1, arg2, arg3 = values[2:5]
+
+    definition='' 
+    if sName is not None:
+        definition+=f'{sName}='
+    # case 1: AngleBisector(Point, Point, Point)
+    # case 2: AngleBisector(line, line)
+    if arg3 is not None: # case 1
+        definition+=f'AngleBisector({capitalize(arg1)},{capitalize(arg2)},{capitalize(arg3)})'
+    else: # case 2
+        definition+=f'AngleBisector({arg1},{arg2})'
+    
+    return definition
+
 
 
 # DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line
-# TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object
+# TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object, intersection
 
 funNames = {
     point: r"(?:point|pnt)",
@@ -186,9 +203,11 @@ funNames = {
     segment: r"(?:segment|segm)",
     ray: r"(?:ray)",
     midpoint: r"(?:midpoint|mid)",
-    bisector: r"(?:bisector|serper|srpr)",
+    bisectionline: r"(?:bisector|serper|srpr)",
     parallel: r"(?:parallel|parl)",
     perpline: r"(?:perpendicularline|perpline|perl)",
+    # perpsegment
+    anglebisector: r"(?:anglebisector|bisec|rat)",
 }
 
 
@@ -225,8 +244,8 @@ fun = {
             f"(?:(?:^ *)|(?:({name})? +))({funNames[midpoint]}) +(?:(?:({name})) *(?:({name}))?)"
         ),
     # (Name) (bisector) (object) (object) 
-    bisector: re.compile(
-            f"(?:(?:^ *)|(?:({name})? +))({funNames[bisector]}) +(?:(?:({name})) *(?:({name}))?)"
+    bisectionline: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[bisectionline]}) +(?:(?:({name})) *(?:({name}))?)"
         ),
     # (name) (parallel) (point) (line|point) (point)
     parallel: re.compile(
@@ -238,7 +257,13 @@ fun = {
             f"(?:(?:^ *)|(?:({name})? +))({funNames[perpline]})"\
             f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
         ),
-
+    # (name) (perpsegment) (point) (line|point) (point)
+    # perpsegment: 
+    # (name) (anglebisector) (point|line) (point|line) (point)
+    anglebisector: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[anglebisector]})"\
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
+        ),
 }
 
 def transformInput(inp):
