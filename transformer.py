@@ -164,15 +164,39 @@ def perpline(values):
     if sName is not None:
         definition+=f'{sName}='
     definition+=f'PerpendicularLine({capitalize(arg1)}, '
-    if arg3 is not None: # case of 3 points
+    if arg3 is not None: # case 1
         definition+=f'Segment({capitalize(arg2)}, {capitalize(arg3)})'
-    else: # case of point and line
+    else: # case 2
         definition+=f'{arg2}'
     definition+=')'
 
     return definition
 
-# def perpsegment(values):
+# def perpsegment(values): t=Segment(G,Intersect(Line(E,B),PerpendicularLine(G,Line(E,B))))
+def perpsegment(values):
+    # values: (name) (perpsegment) (point) (point|line) (point)
+    sName = values[0]
+    arg1, arg2, arg3 = values[2:5]
+
+    definition='' 
+    # case 1: Segment(Point1,Intersect(Line(Point2,Point3),PerpendicularLine(Point1,Line(Point2,Point3))))
+    # adding intersection: Execute({"case 1", "(name)=Intersect(Line(Point2,Point3),PerpendicularLine(Point1,Line(Point2,Point3)))"})
+    # case 2: Segment(Point1,Intersect(line,PerpendicularLine(Point1,line)))
+    # adding intersection: Execute({"case 2", "(name)=Intersect(line,PerpendicularLine(Point1,line))"})
+    if sName is not None: nameInit = f'{sName}='
+    else: nameInit = ''
+    definition+= 'Execute({"'
+    if arg3 is not None: # case 1
+        definition+=f'Segment({capitalize(arg1)},'\
+            f'Intersect(Line({capitalize(arg2)},{capitalize(arg3)}),PerpendicularLine({capitalize(arg1)},Line({capitalize(arg2)},{capitalize(arg3)}))))",'\
+            f'"{nameInit}Intersect(Line({capitalize(arg2)},{capitalize(arg3)}),PerpendicularLine({capitalize(arg1)},Line({capitalize(arg2)},{capitalize(arg3)})))"'
+    else: # case 2  
+        definition+=f'Segment({capitalize(arg1)},'\
+            f'Intersect({arg2},PerpendicularLine({capitalize(arg1)},{arg2})))",'\
+            f'"{nameInit}Intersect({arg2},PerpendicularLine({capitalize(arg1)},{arg2}))"'
+    definition+='})'
+
+    return definition
 
 def anglebisector(values):
     # values: (name) (perpline) (point|line) (point|line|line) (point)
@@ -230,8 +254,8 @@ def show(values):
     
     return definition
 
-# DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line
-# TODO: perpsegment, bisection (serper), bisector, tangent, circumference, hide object, show object, intersection
+# DONE: point, line, point on, segment, ray, midpoint, parallel line, perpendicular line, bisection (serper), bisector, hide object, show object, intersection
+# TODO: perpsegment, tangent, circumference, 
 
 funNames = {
     point: r"(?:point|pnt)",
@@ -243,7 +267,7 @@ funNames = {
     bisectionline: r"(?:bisector|serper|srpr)",
     parallel: r"(?:parallel|parl)",
     perpline: r"(?:perpendicularline|perpline|perl)",
-    # perpsegment
+    perpsegment: r"(?:perpendicularsegment|perpsegm|pers)",
     anglebisector: r"(?:anglebisector|bisec|rat)",
     intersect: r"(?:intersect|inter|int)",
     hide: r"(?:hide)",
@@ -295,10 +319,13 @@ fun = {
     # (name) (perpline) (point) (line|point) $ (point)
     perpline: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[perpline]})"\
-            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))(?: *$| +(?:({name})))"
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
         ),
     # (name) (perpsegment) (point) (line|point) $ (point)
-    # perpsegment: 
+    perpsegment: re.compile(
+            f"(?:(?:^ *)|(?:({name})? +))({funNames[perpsegment]})"\
+            f" +(?:(?:({name})) +(?:({name})))(?: *$| +(?:({name})))"
+        ),
     # (name) (anglebisector) (point|line) (point|line) $ (point)
     anglebisector: re.compile(
             f"(?:(?:^ *)|(?:({name})? +))({funNames[anglebisector]})"\
