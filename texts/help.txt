@@ -1,0 +1,15 @@
+Here is the list of commands an how to call them
+Point: <point> or <pnt>
+PointOn: <pointon> or <on>
+Line: <line> or <ln>
+Segment: <segment> or <segm>
+Ray: <ray>
+Middle Point: <midpoint> or <mid>
+Bisection Line: <bisector> or <serper> or <srpr>
+Parallel Line: <parallel> or <parl>
+Perpendicular Line: <perpendicularline> or <perpline> or <perl>
+Perpendicular Segment: <perpendicularsegment> or <perpsegm> or <pers>
+Angle Bisector: <anglebisector> or <bisec> or <rat>
+Intersection Point: <intersect> or <inter> or <int>
+Hide object: <hide>
+Show object: <show>
