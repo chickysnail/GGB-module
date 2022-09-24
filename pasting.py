@@ -1,7 +1,6 @@
 from pynput.mouse import Listener, Button
 import time
 import keyboard
-import pyperclip as pc
 from threading import Thread
 
 previous_left = 0

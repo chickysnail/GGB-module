@@ -24,7 +24,7 @@ while True:
             print(help_handler.askGeneralHelp())
         else:
             for func in funNames.keys():
-                if re.search(splitText[1], funNames[func], re.MULTILINE):
+                if re.search(re.compile('^'+funNames[func]), splitText[1]):
                     print(help_handler.askSpecificHelp(func))
                            
         continue

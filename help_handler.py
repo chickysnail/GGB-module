@@ -6,7 +6,7 @@ from functions import *
 
 usages = {
     point: 
-        "(name) point|pnt (x y) \n Note: the default values of x y are 0 0",
+        "(name) point|pnt (x y) \n Note: if x y not specified, then x y are random in range [-5,5]",
     pointOn:
         "(name) pointon|on [object name to put the point on]",
     line:

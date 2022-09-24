@@ -1,4 +1,5 @@
 import conf
+from random import randint
 
 def capitalize(s:str, do=conf.CAPITALIZE):
     if do:
@@ -8,7 +9,7 @@ def capitalize(s:str, do=conf.CAPITALIZE):
 def point(values):
     # values: (Name) (point) (x y)
     sName = values[0] # sName short for self name
-    coords: list = [0,0] if values[2] == None else values[2].split()
+    coords: list = [randint(-5,5),randint(-5,5)] if values[2] == None else values[2].split()
     
     definition=""
     if sName is not None:

@@ -1,0 +1,4 @@
+This is Geogebra Extension, that helps you build geometric drawings faster!
+ - for general help type "help"
+ - for help with a specific function type "help <function name>"
+ - a video tutorial of this extension is coming soon in the new versions
